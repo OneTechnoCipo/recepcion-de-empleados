@@ -16,7 +16,7 @@ export interface AttendanceRecord {
   employeeId: number; // ID del empleado asociado a este registro
   date: string; // Fecha del registro de asistencia (e.g., "YYYY-MM-DD")
   checkIn: string; // Hora de entrada (e.g., "HH:MM")
-  checkOut: string; // Hora de salida (e.g., "HH:MM")
+checkOut: string | null; // Hora de salida (e.g., "HH:MM")
   breakHours: number; // Horas tomadas para el descanso
   notes: string; // Notas adicionales sobre la asistencia
 }

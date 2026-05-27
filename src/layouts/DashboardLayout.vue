@@ -2,7 +2,7 @@
   <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
     <!-- Sidebar - Escritorio -->
     <aside
-      class="w-64 bg-gray-800 text-white p-4 space-y-4 flex-shrink-0"
+      class="w-64 bg-gray-800 text-white p-4 space-y-4 shrink-0"
       :class="{ 'hidden md:block': !isMobileMenuOpen }"
     >
       <div class="text-2xl font-bold text-center">
@@ -12,28 +12,28 @@
       <nav>
         <ul>
           <li>
-            <router-link
+            <RouterLink
               to="/dashboard"
               class="block py-2 px-4 rounded transition duration-200 hover:bg-gray-700"
             >
               Dashboard
-            </router-link>
+            </RouterLink>
           </li>
           <li>
-            <router-link
+            <RouterLink
               to="/attendance"
               class="block py-2 px-4 rounded transition duration-200 hover:bg-gray-700"
             >
               Asistencia
-            </router-link>
+            </RouterLink>
           </li>
           <li>
-            <router-link
+            <RouterLink
               to="/users"
               class="block py-2 px-4 rounded transition duration-200 hover:bg-gray-700"
             >
               Usuarios
-            </router-link>
+            </RouterLink>
           </li>
         </ul>
       </nav>
@@ -68,7 +68,7 @@
 
       <!-- Contenido de la página -->
       <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-4">
-        <router-view></router-view>
+        <RouterView />
       </main>
     </div>
   </div>
