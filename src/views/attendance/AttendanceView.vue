@@ -1,15 +1,17 @@
 <template>
-  <div class="p-6 space-y-8">
+  <div class="h-screen flex flex-col overflow-hidden p-6 bg-gray-50 dark:bg-gray-900 transition-colors">
 
-    <!-- Formulario de fichaje -->
-    <AttendanceCheckInForm
-      @register-attendance="handleRegisterAttendance"
-    />
+    <div class="flex-shrink-0 mb-6">
+      <AttendanceCheckInForm
+        @register-attendance="handleRegisterAttendance"
+      />
+    </div>
 
-    <!-- Tabla de asistencia -->
-    <AttendanceTable
-      :records="records"
-    />
+    <div class="flex-1 min-h-0">
+      <AttendanceTable
+        :records="records"
+      />
+    </div>
 
   </div>
 </template>
