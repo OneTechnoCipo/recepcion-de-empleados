@@ -1,53 +1,64 @@
 <template>
-  <div class="max-w-3xl mx-auto mt-8">
-    <button @click="router.back()" class="mb-4 text-blue-600 hover:text-blue-800 dark:text-blue-400 font-medium flex items-center gap-1">
-      ← Volver a la lista
-    </button>
+  <div v-if="user" class="max-w-3xl mx-auto space-y-6">
+    <div class="flex items-center gap-4">
+      <button @click="$router.back()" class="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors">
+        <Icon icon="heroicons:arrow-left" class="w-6 h-6" />
+      </button>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Ficha de Empleado</h1>
+    </div>
 
-    <div v-if="user" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:p-8">
-      <div class="flex items-center gap-4 mb-6 pb-6 border-b dark:border-gray-700">
-        <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-2xl font-bold">
-          {{ user.name.charAt(0).toUpperCase() }}
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="h-24 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+      
+      <div class="px-8 pb-8">
+        <div class="relative -mt-12 mb-6">
+          <div class="w-24 h-24 bg-gray-200 dark:bg-gray-700 rounded-full border-4 border-white dark:border-gray-800 flex items-center justify-center text-gray-400">
+            <Icon icon="heroicons:user-solid" class="w-12 h-12" />
+          </div>
         </div>
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ user.name }}</h1>
-          <p class="text-gray-500 dark:text-gray-400">ID de Sistema: {{ user.id }}</p>
+
+        <div class="space-y-6">
+          <div>
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">{{ user.firstName }} {{ user.lastName }}</h2>
+            <p class="text-blue-600 dark:text-blue-400 font-medium">{{ user.role }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                <Icon icon="heroicons:identification" class="w-5 h-5 text-gray-400" />
+                <span>DNI: {{ user.id }}</span>
+              </div>
+              <div class="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                <Icon icon="heroicons:envelope" class="w-5 h-5 text-gray-400" />
+                <span>{{ user.email }}</span>
+              </div>
+            </div>
+            <div class="space-y-4">
+              <div class="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                <Icon icon="heroicons:briefcase" class="w-5 h-5 text-gray-400" />
+                <span>Sector: {{ user.sector }}</span>
+              </div>
+              <div class="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                <Icon icon="heroicons:clock" class="w-5 h-5 text-gray-400" />
+                <span>{{ user.standardWorkHours }} hs base</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div class="space-y-4">
-        <div>
-          <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Información de Contacto</h3>
-          <p class="mt-1 text-lg text-gray-900 dark:text-white flex items-center gap-2">
-            ✉️ {{ user.email }}
-          </p>
-        </div>
-        
-        </div>
-    </div>
-
-    <div v-else class="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow">
-      <h2 class="text-xl font-bold text-red-600 mb-2">Usuario no encontrado</h2>
-      <p class="text-gray-600 dark:text-gray-400">El ID proporcionado no corresponde a ningún usuario en el sistema.</p>
     </div>
   </div>
+  <div v-else class="text-center p-12 text-gray-500">Empleado no encontrado.</div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useUsers } from '../../composables/useUsers';
-import type { User } from '../../models/CustomModels';
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import { Icon } from '@iconify/vue';
+import { employees } from '../../data/employees';
 
 const route = useRoute();
-const router = useRouter();
-const { getUserById } = useUsers();
-
-const user = ref<User | undefined>(undefined);
-
-onMounted(() => {
-  // Obtenemos el parámetro ':id' de la URL
-  const id = route.params.id as string;
-  user.value = getUserById(id);
-});
+const employeeId = computed(() => Number(route.params.id));
+const user = computed(() => employees.value.find(e => e.id === employeeId.value));
 </script>

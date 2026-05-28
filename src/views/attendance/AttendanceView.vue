@@ -1,95 +1,66 @@
 <template>
-  <div class="h-screen flex flex-col overflow-hidden p-6 bg-gray-50 dark:bg-gray-900 transition-colors">
-
-    <div class="flex-shrink-0 mb-6">
-      <AttendanceCheckInForm
-        @register-attendance="handleRegisterAttendance"
-      />
+  <div class="h-full flex flex-col p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors">
+    
+    <!-- Botón de control de la Terminal -->
+    <div class="mb-6">
+      <button 
+        @click="showForm = !showForm"
+        class="flex items-center gap-2 text-sm px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm"
+      >
+        <Icon 
+          :icon="showForm ? 'heroicons:eye-slash' : 'heroicons:plus-circle'" 
+          class="w-4 h-4" 
+        />
+        {{ showForm ? 'Ocultar Terminal' : 'Nueva Asistencia' }}
+      </button>
     </div>
 
-    <div class="flex-1 min-h-0">
-      <AttendanceTable
-        :records="records"
-      />
+    <!-- Terminal de Asistencia con animación -->
+    <div v-if="showForm" class="shrink-0 mb-6 animate-in slide-in-from-top-2 duration-300">
+      <AttendanceCheckInForm @register-attendance="handleRegisterAttendance" />
     </div>
 
+    <!-- Tabla -->
+    <div class="flex-1 min-h-0 overflow-hidden">
+      <AttendanceTable :records="records" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { AttendanceRecord } from '../../models/CustomModels'
 import { ref } from 'vue'
-
+import { Icon } from '@iconify/vue' // Importación añadida
 import AttendanceTable from '../../components/attendance/AttendanceTable.vue'
 import AttendanceCheckInForm from '../../components/attendance/AttendanceCheckInForm.vue'
-
 import { attendanceRecords } from '../../data/attendance'
+import type { AttendanceRecord } from '../../models/CustomModels'
 
+const showForm = ref(true)
+const records = ref<AttendanceRecord[]>([...attendanceRecords])
 
-// Estado reactivo principal de registros
-const records = ref<AttendanceRecord[]>([
-  ...attendanceRecords
-])
-
-// Función para registrar asistencia
-const handleRegisterAttendance = (
-  payload: {
-    employeeId: number
-    notes: string
-  }
-) => {
-
+const handleRegisterAttendance = (payload: { employeeId: number; notes: string }) => {
   const currentDate = new Date()
+  const today = currentDate.toISOString().split('T')[0]
+  const currentTime = currentDate.toTimeString().slice(0, 5)
 
-  const today = currentDate
-    .toISOString()
-    .split('T')[0]
-
-  const currentTime = currentDate
-    .toTimeString().slice(0, 8)
-
-  // Buscar registro activo del empleado
   const activeRecord = records.value.find(
-    (record) =>
-      record.employeeId === payload.employeeId &&
-      record.date === today &&
-      record.checkOut === null
+    (r) => r.employeeId === payload.employeeId && r.date === today && r.checkOut === null
   )
 
-  // SI YA TIENE ENTRADA → registrar salida
   if (activeRecord) {
-
     activeRecord.checkOut = currentTime
-
-    // Agregar nota extra si existe
-    if (payload.notes) {
-      activeRecord.notes += ` | ${payload.notes}`
+    if (payload.notes) activeRecord.notes += ` | ${payload.notes}`
+  } else {
+    const newRecord: AttendanceRecord = {
+      id: Date.now(),
+      employeeId: payload.employeeId,
+      date: today,
+      checkIn: currentTime,
+      checkOut: null,
+      breakHours: 0,
+      notes: payload.notes
     }
-
-    return
+    records.value.push(newRecord)
   }
-
-  // SI NO TIENE ENTRADA → crear nuevo registro
-  const newRecord: AttendanceRecord = {
-    id: Date.now(),
-
-    employeeId: payload.employeeId,
-
-    date: today,
-
-    checkIn: currentTime,
-
-    checkOut: null,
-
-    breakHours: 0,
-
-    notes: payload.notes
-  }
-
-  records.value.push(newRecord)
 }
 </script>
-
-<style scoped>
-/* Estilos específicos del componente si son necesarios */
-</style>
