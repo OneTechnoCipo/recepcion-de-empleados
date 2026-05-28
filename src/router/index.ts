@@ -26,6 +26,11 @@ const routes = [
         name: 'Users',
         component: () => import("../views/users/UsersView.vue"),
       },
+      {
+        path: 'users/:id',  // Ruta dinámica solicitada en el TP
+        name: 'UserDetail',
+        component: () => import("../views/users/UserDetailView.vue"),
+      },
     ],
   },
 ];
