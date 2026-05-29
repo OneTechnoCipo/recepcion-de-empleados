@@ -1,7 +1,8 @@
+import { ref } from 'vue';
 import type { AttendanceRecord } from '../models/CustomModels';
 
-// Datos simulados asignados
-export const attendanceRecords: AttendanceRecord[] = [
+// Definimos los datos iniciales
+const initialRecords: AttendanceRecord[] = [
   {
     id: 1,
     employeeId: 40111222, 
@@ -66,3 +67,6 @@ export const attendanceRecords: AttendanceRecord[] = [
     notes: 'Incidente crítico resuelto en producción.',
   },
 ];
+
+// Exportamos como un ref reactivo para asegurar la persistencia
+export const attendanceRecords = ref<AttendanceRecord[]>(initialRecords);

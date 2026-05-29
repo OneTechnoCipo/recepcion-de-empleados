@@ -1,7 +1,6 @@
 <template>
   <div class="h-full flex flex-col p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors">
     
-    <!-- Botón de control de la Terminal -->
     <div class="mb-6">
       <button 
         @click="showForm = !showForm"
@@ -15,12 +14,10 @@
       </button>
     </div>
 
-    <!-- Terminal de Asistencia con animación -->
     <div v-if="showForm" class="shrink-0 mb-6 animate-in slide-in-from-top-2 duration-300">
       <AttendanceCheckInForm @register-attendance="handleRegisterAttendance" />
     </div>
 
-    <!-- Tabla -->
     <div class="flex-1 min-h-0 overflow-hidden">
       <AttendanceTable :records="records" />
     </div>
@@ -29,20 +26,24 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Icon } from '@iconify/vue' // Importación añadida
+import { Icon } from '@iconify/vue'
 import AttendanceTable from '../../components/attendance/AttendanceTable.vue'
 import AttendanceCheckInForm from '../../components/attendance/AttendanceCheckInForm.vue'
+// Importamos la fuente de verdad reactiva
 import { attendanceRecords } from '../../data/attendance'
 import type { AttendanceRecord } from '../../models/CustomModels'
 
 const showForm = ref(true)
-const records = ref<AttendanceRecord[]>([...attendanceRecords])
+
+// Usamos la referencia global directamente, sin clonar
+const records = attendanceRecords
 
 const handleRegisterAttendance = (payload: { employeeId: number; notes: string }) => {
   const currentDate = new Date()
   const today = currentDate.toISOString().split('T')[0]
   const currentTime = currentDate.toTimeString().slice(0, 5)
 
+  // Buscamos dentro del estado compartido
   const activeRecord = records.value.find(
     (r) => r.employeeId === payload.employeeId && r.date === today && r.checkOut === null
   )
@@ -60,7 +61,9 @@ const handleRegisterAttendance = (payload: { employeeId: number; notes: string }
       breakHours: 0,
       notes: payload.notes
     }
+    // Hacemos push directo a la referencia compartida
     records.value.push(newRecord)
   }
 }
 </script>
+

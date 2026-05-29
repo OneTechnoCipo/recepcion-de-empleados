@@ -16,6 +16,7 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-wider sticky top-0 bg-white dark:bg-gray-800 z-10 border-b dark:border-gray-700">
+              <th class="py-3 px-3 font-semibold">Fecha</th>
               <th class="py-3 px-3 font-semibold">Empleado</th>
               <th class="py-3 px-3 font-semibold">Puesto</th>
               <th class="py-3 px-3 font-semibold text-center">Entrada</th>
@@ -28,6 +29,10 @@
             <tr v-for="record in extendedAttendanceRecords" :key="record.id" 
                 class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
               
+              <td class="px-3 py-4 text-sm text-gray-600 dark:text-gray-300 font-mono">
+                {{ formatDate(record.date) }}
+              </td>
+
               <td class="px-3 py-4">
                 <p class="font-medium text-gray-900 dark:text-white">{{ record.employeeFullName }}</p>
               </td>
@@ -59,16 +64,25 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Icon } from '@iconify/vue'; // Importante para los iconos
+import { Icon } from '@iconify/vue';
 import type { AttendanceRecord } from '../../models/CustomModels';
 import { employees } from '../../data/employees';
+
+// Función corregida:
+const formatDate = (dateStr: string) => {
+  const parts = dateStr.split('-');
+  // Si tienes 3 partes, formateamos como día/mes
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}`;
+  }
+  return dateStr;
+};
 
 interface ExtendedAttendanceRecord extends AttendanceRecord {
   employeeFullName: string;
   employeeRole: string;
   workedHours: number;
   overtimeHours: number;
-  isActive: boolean;
 }
 
 const props = defineProps<{
@@ -77,9 +91,7 @@ const props = defineProps<{
 
 const extendedAttendanceRecords = computed<ExtendedAttendanceRecord[]>(() => {
   return props.records.map((record) => {
-    // Acceso correcto a la lista reactiva global
     const employee = employees.value.find(e => e.id === record.employeeId);
-    
     const employeeFullName = employee ? `${employee.firstName} ${employee.lastName}` : 'Desconocido';
     const employeeRole = employee ? employee.role : 'N/A';
 
@@ -91,7 +103,6 @@ const extendedAttendanceRecords = computed<ExtendedAttendanceRecord[]>(() => {
       const checkOutTime = new Date(`${record.date}T${record.checkOut}:00`);
       const totalMilliseconds = checkOutTime.getTime() - checkInTime.getTime();
       const totalHours = totalMilliseconds / (1000 * 60 * 60);
-      
       workedHours = Math.max(0, totalHours - record.breakHours);
 
       if (employee && workedHours > employee.standardWorkHours) {
@@ -99,19 +110,17 @@ const extendedAttendanceRecords = computed<ExtendedAttendanceRecord[]>(() => {
       }
     }
 
-    const isActive = record.employeeId % 2 === 0;
-
     return {
       ...record,
       employeeFullName,
       employeeRole,
       workedHours,
-      overtimeHours,
-      isActive,
+      overtimeHours
     };
   });
 });
 </script>
+
 <style scoped>
 .scrollbar-fina::-webkit-scrollbar { width: 6px; height: 6px; }
 .scrollbar-fina::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
