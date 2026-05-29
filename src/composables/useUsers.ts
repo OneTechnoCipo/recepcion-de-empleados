@@ -2,15 +2,15 @@ import { ref, computed } from 'vue';
 import { employees } from '../data/employees';
 import type { Employee } from '../models/CustomModels';
 
-// Tipos estrictos para el ordenamiento estilo FIFA
-export type UserSortKey = 'id' | 'name' | 'email' | 'sector' | 'hours';
+// Tipos estrictos basados exactamente en las propiedades de tu Employee
+export type UserSortKey = 'id' | 'firstName' | 'email' | 'sector' | 'standardWorkHours';
 export type SortOrder = 'asc' | 'desc';
 
 export function useUsers() {
   const searchQuery = ref('');
   
-  // Estados reactivos para controlar el ordenamiento
-  const sortKey = ref<UserSortKey>('name'); // Por defecto ordena por nombre
+  // Estados reactivos para controlar el ordenamiento (por defecto por nombre)
+  const sortKey = ref<UserSortKey>('firstName'); 
   const sortOrder = ref<SortOrder>('asc');
 
   // Función interactiva para cambiar de columna o invertir el orden
@@ -23,10 +23,11 @@ export function useUsers() {
     }
   };
 
-  // Procesamiento en cascada: Primero Filtra, después Ordena (Regla del profe)
+  // Procesamiento en cascada: Primero Filtra, después Ordena
   const filteredUsers = computed(() => {
-    // 1. Filtrado completo por múltiples campos
     const query = searchQuery.value.toLowerCase().trim();
+    
+    // 1. Filtrado completo por múltiples campos
     let result = employees.value.filter(emp => {
       const fullName = `${emp.firstName} ${emp.lastName}`.toLowerCase();
       return (
@@ -37,7 +38,7 @@ export function useUsers() {
       );
     });
 
-    // 2. Ordenamiento dinámico sin mutar el array original (usamos spread operator)
+    // 2. Ordenamiento dinámico sin romper los tipos de TS
     return [...result].sort((a, b) => {
       let modifier = sortOrder.value === 'asc' ? 1 : -1;
 
@@ -45,18 +46,15 @@ export function useUsers() {
         return (a.id - b.id) * modifier;
       }
       
-      if (sortKey.value === 'hours') {
+      if (sortKey.value === 'standardWorkHours') {
         return (a.standardWorkHours - b.standardWorkHours) * modifier;
       }
 
-      if (sortKey.value === 'name') {
-        const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
-        const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
-        return nameA.localeCompare(nameB) * modifier;
-      }
-
-      // Para email y sector de forma genérica
-      return a[sortKey.value].toLowerCase().localeCompare(b[sortKey.value].toLowerCase()) * modifier;
+      // Tratamiento seguro de strings para firstName, email y sector
+      const valA = String(a[sortKey.value]).toLowerCase();
+      const valB = String(b[sortKey.value]).toLowerCase();
+      
+      return valA.localeCompare(valB) * modifier;
     });
   });
 

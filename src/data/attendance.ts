@@ -1,10 +1,10 @@
 import type { AttendanceRecord } from '../models/CustomModels';
 
-// Datos simulados de registros de asistencia para demostración.
+// Datos simulados asignados
 export const attendanceRecords: AttendanceRecord[] = [
   {
     id: 1,
-    employeeId: 40111222,
+    employeeId: 40111222, 
     date: '2026-05-26',
     checkIn: '09:00',
     checkOut: '17:00',
@@ -13,7 +13,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
   {
     id: 2,
-    employeeId: 38999111,
+    employeeId: 38999111, 
     date: '2026-05-26',
     checkIn: '08:30',
     checkOut: '18:00',
@@ -22,7 +22,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
   {
     id: 3,
-    employeeId: 42123456,
+    employeeId: 42123456, 
     date: '2026-05-26',
     checkIn: '09:15',
     checkOut: '17:30',
@@ -31,7 +31,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
   {
     id: 4,
-    employeeId: 40111222,
+    employeeId: 40111222, 
     date: '2026-05-27',
     checkIn: '09:00',
     checkOut: '19:00',
@@ -40,7 +40,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
   {
     id: 5,
-    employeeId: 38999111,
+    employeeId: 38999111, 
     date: '2026-05-27',
     checkIn: '09:00',
     checkOut: '17:00',
@@ -49,7 +49,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
   {
     id: 6,
-    employeeId: 44555666,
+    employeeId: 42123456,
     date: '2026-05-26',
     checkIn: '09:00',
     checkOut: '17:00',
@@ -58,7 +58,7 @@ export const attendanceRecords: AttendanceRecord[] = [
   },
   {
     id: 7,
-    employeeId: 44555666,
+    employeeId: 42123456, 
     date: '2026-05-27',
     checkIn: '08:00',
     checkOut: '19:00',

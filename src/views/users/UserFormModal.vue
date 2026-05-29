@@ -19,9 +19,21 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1.5">
               <Icon icon="heroicons:identification" class="w-4 h-4 text-gray-400" /> DNI
             </label>
-            <input v-model.number="formData.id" type="number" required :disabled="isEditing"
-              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-900 transition-all"
+            <input 
+              v-model="dniInput" 
+              type="text" 
+              required 
+              :disabled="isEditing"
+              maxlength="8"
+              @input="onDniInput"
+              placeholder="Ej: 42123456"
+              class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-900 transition-all font-mono"
+              :class="{'border-red-500 focus:ring-red-500 dark:border-red-500': dniError}"
             />
+            <p v-if="dniError" class="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+              <Icon icon="heroicons:exclamation-triangle" class="w-4 h-4 text-red-500" />
+              El DNI debe tener entre 7 y 8 dígitos.
+            </p>
           </div>
 
           <div>
@@ -77,7 +89,11 @@
           <button type="button" @click="$emit('close')" class="px-4 py-2 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
             Cancelar
           </button>
-          <button type="submit" class="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition-all">
+          <button 
+            type="submit" 
+            :disabled="dniError"
+            class="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+          >
             <Icon icon="heroicons:check" class="w-5 h-5" />
             Guardar Cambios
           </button>
@@ -88,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
 
@@ -96,15 +112,54 @@ const props = defineProps<{ isOpen: boolean; userToEdit: Employee | null; }>();
 const emit = defineEmits<{ (e: 'close'): void; (e: 'save', user: Employee, isEditing: boolean): void; }>();
 
 const isEditing = ref(false);
+const dniInput = ref(''); 
+
 const defaultForm = (): Employee => ({ id: 0, firstName: '', lastName: '', email: '', role: '', sector: '', standardWorkHours: 8, overtimeValue: 1.5 });
 const formData = ref<Employee>(defaultForm());
 
 watch(() => props.userToEdit, (newVal) => {
-  if (newVal) { formData.value = { ...newVal }; isEditing.value = true; }
-  else { formData.value = defaultForm(); isEditing.value = false; }
+  if (newVal) { 
+    formData.value = { ...newVal }; 
+    dniInput.value = newVal.id.toString(); 
+    isEditing.value = true; 
+  } else { 
+    formData.value = defaultForm(); 
+    dniInput.value = ''; 
+    isEditing.value = false; 
+  }
 }, { immediate: true });
 
+const onDniInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  dniInput.value = input.value.replace(/\D/g, ''); 
+};
+
+const dniError = computed(() => {
+  if (!dniInput.value) return false; 
+  return dniInput.value.length < 7 || dniInput.value.length > 8;
+});
+
+// Función helper para transformar "san ti" o "trapeador" en "San Ti" y "Trapeador"
+const capitalizeWords = (str: string): string => {
+  if (!str) return '';
+  return str
+    .trim()
+    .split(/\s+/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const handleSubmit = () => {
+  if (dniError.value) return;
+
+  formData.value.id = parseInt(dniInput.value, 10);
+
+  // Formateamos los strings en caliente antes de guardarlos para garantizar consistencia visual
+  formData.value.firstName = capitalizeWords(formData.value.firstName);
+  formData.value.lastName = capitalizeWords(formData.value.lastName);
+  formData.value.role = capitalizeWords(formData.value.role);
+  formData.value.sector = capitalizeWords(formData.value.sector);
+
   emit('save', formData.value, isEditing.value);
   emit('close');
 };

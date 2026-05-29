@@ -12,10 +12,10 @@
             </div>
           </th>
 
-          <th @click="$emit('sort', 'name')" class="p-4 font-semibold text-sm uppercase tracking-wider cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors group">
+          <th @click="$emit('sort', 'firstName')" class="p-4 font-semibold text-sm uppercase tracking-wider cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors group">
             <div class="flex items-center gap-1">
               Empleado
-              <Icon v-if="sortKey === 'name'" :icon="sortOrder === 'asc' ? 'heroicons:chevron-up' : 'heroicons:chevron-down'" class="w-4 h-4 text-blue-600" />
+              <Icon v-if="sortKey === 'firstName'" :icon="sortOrder === 'asc' ? 'heroicons:chevron-up' : 'heroicons:chevron-down'" class="w-4 h-4 text-blue-600" />
               <Icon v-else icon="heroicons:chevron-up-down" class="w-4 h-4 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </th>
@@ -36,10 +36,10 @@
             </div>
           </th>
 
-          <th @click="$emit('sort', 'hours')" class="p-4 font-semibold text-sm uppercase tracking-wider cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors group">
+          <th @click="$emit('sort', 'standardWorkHours')" class="p-4 font-semibold text-sm uppercase tracking-wider cursor-pointer hover:bg-gray-100/50 dark:hover:bg-gray-700/50 transition-colors group">
             <div class="flex items-center gap-1">
               Horas
-              <Icon v-if="sortKey === 'hours'" :icon="sortOrder === 'asc' ? 'heroicons:chevron-up' : 'heroicons:chevron-down'" class="w-4 h-4 text-blue-600" />
+              <Icon v-if="sortKey === 'standardWorkHours'" :icon="sortOrder === 'asc' ? 'heroicons:chevron-up' : 'heroicons:chevron-down'" class="w-4 h-4 text-blue-600" />
               <Icon v-else icon="heroicons:chevron-up-down" class="w-4 h-4 text-gray-300 dark:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
           </th>

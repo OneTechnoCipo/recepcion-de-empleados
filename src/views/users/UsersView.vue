@@ -47,7 +47,7 @@ import UserCard from '../../components/users/UserCard.vue';
 import UserFormModal from './UserFormModal.vue'; 
 import type { Employee } from '../../models/CustomModels';
 
-// Desestructuración con las nuevas variables y funciones añadidas en el composable
+// Desestructuración limpia importando las funciones del composable actualizado
 const { 
   searchQuery, 
   sortKey, 
