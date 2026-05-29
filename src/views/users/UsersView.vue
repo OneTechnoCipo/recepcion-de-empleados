@@ -19,7 +19,14 @@
       </div>
     </div>
 
-    <UsersTable :users="filteredUsers" @edit="openEditModal" @delete="handleDelete" />
+    <UsersTable 
+      :users="filteredUsers" 
+      :sort-key="sortKey"
+      :sort-order="sortOrder"
+      @sort="changeSort"
+      @edit="openEditModal" 
+      @delete="handleDelete" 
+    />
 
     <div class="grid grid-cols-1 gap-4 md:hidden">
       <UserCard v-for="user in filteredUsers" :key="user.id" :user="user" @edit="openEditModal" @delete="handleDelete" />
@@ -37,10 +44,19 @@ import { ref } from 'vue';
 import { useUsers } from '../../composables/useUsers';
 import UsersTable from '../../components/users/UsersTable.vue';
 import UserCard from '../../components/users/UserCard.vue';
-import UserFormModal from './UserFormModal.vue'; // Apuntando a tu carpeta real views/users/
+import UserFormModal from './UserFormModal.vue'; 
 import type { Employee } from '../../models/CustomModels';
 
-const { searchQuery, filteredUsers, deleteUser, saveUser } = useUsers();
+// Desestructuración con las nuevas variables y funciones añadidas en el composable
+const { 
+  searchQuery, 
+  sortKey, 
+  sortOrder, 
+  filteredUsers, 
+  changeSort, 
+  deleteUser, 
+  saveUser 
+} = useUsers();
 
 const isModalOpen = ref(false);
 const selectedUser = ref<Employee | null>(null);
