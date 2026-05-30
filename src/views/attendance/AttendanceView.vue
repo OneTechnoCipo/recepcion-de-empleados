@@ -29,32 +29,34 @@ import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 import AttendanceTable from '../../components/attendance/AttendanceTable.vue'
 import AttendanceCheckInForm from '../../components/attendance/AttendanceCheckInForm.vue'
-// Importamos la fuente de verdad reactiva
 import { attendanceRecords } from '../../data/attendance'
 import type { AttendanceRecord } from '../../models/CustomModels'
 
-// Lee el DNI en tiempo real: si el empleado está ausente, muestra el botón azul de Entrada; si ya ingresó,
-// cambia a rojo para marcar la Salida y cerrar su ciclo de asistencia.
+// Reads the DNI in real-time: displays the blue "Entrada" button if the employee is absent, 
+// or switches to red "Salida" to close their daily shift if already checked in.
 
 const showForm = ref(true)
 
-// Usamos la referencia global directamente, sin clonar
+// Binds directly to the shared global reactive reference without cloning structural values
 const records = attendanceRecords
 
+// Processes employee intent events to register either a fresh check-in log or close an open daily shift
 const handleRegisterAttendance = (payload: { employeeId: number; notes: string }) => {
   const currentDate = new Date()
   const today = currentDate.toISOString().split('T')[0]
   const currentTime = currentDate.toTimeString().slice(0, 5)
 
-  // Buscamos dentro del estado compartido
+  // Scans the reference to locate an active attendance record that lacks a check-out timestamp today
   const activeRecord = records.value.find(
     (r) => r.employeeId === payload.employeeId && r.date === today && r.checkOut === null
   )
 
   if (activeRecord) {
+    // If a session exists, closes the employee tracking shift with the current local time
     activeRecord.checkOut = currentTime
     if (payload.notes) activeRecord.notes += ` | ${payload.notes}`
   } else {
+    // Generates a fully structure-compliant AttendanceRecord object if no active shift is logged
     const newRecord: AttendanceRecord = {
       id: Date.now(),
       employeeId: payload.employeeId,
@@ -64,9 +66,8 @@ const handleRegisterAttendance = (payload: { employeeId: number; notes: string }
       breakHours: 0,
       notes: payload.notes
     }
-    // Hacemos push directo a la referencia compartida
+    // Directly pushes the valid data payload into the globally monitored reactive array
     records.value.push(newRecord)
   }
 }
 </script>
-

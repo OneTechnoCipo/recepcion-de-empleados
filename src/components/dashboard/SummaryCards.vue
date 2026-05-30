@@ -30,8 +30,8 @@
 import { computed } from 'vue';
 import { Icon } from '@iconify/vue'; 
 
-// Muestra métricas rápidas e indicadores clave en el panel principal, 
-// como el total de empleados activos y ausentes en tiempo real.
+// Renders high-level real-time metrics on the main dashboard, 
+// tracking active versus absent employee counts.
 
 interface SummaryCard {
   title: string;
@@ -46,6 +46,7 @@ const props = defineProps<{
   totalLate: number;
 }>();
 
+// Reactively builds the dashboard metric cards based on current state properties passed by parent component
 const summaryCards = computed<SummaryCard[]>(() => [
   { 
     title: 'Total Empleados', 

@@ -101,10 +101,10 @@ import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
 import type { UserSortKey, SortOrder } from '../../composables/useUsers';
 import { RouterLink } from 'vue-router';
-import { attendanceRecords } from '../../data/attendance'; // Importamos los fichajes en memoria
+import { attendanceRecords } from '../../data/attendance'; 
 
-// Renderiza la lista de usuarios y cruza sus datos con los fichajes del día para mostrar automáticamente 
-// la insignia verde de "Activo" o gris de "Ausente".
+// Renders the user list and cross-references active data with 
+// daily attendance records to automatically display "Activo" (green) or "Ausente" (gray) badges.
 
 defineProps<{ 
   users: Employee[];
@@ -118,9 +118,8 @@ defineEmits<{
   (e: 'delete', id: number): void;
 }>();
 
-// Función lógica para cruzar datos y verificar el estado actual del empleado
+// Evaluation guard that scans local records to check if an employee has an unclosed check-in session today
 const isEmployeeActive = (employeeId: number): boolean => {
-  // Buscamos si el empleado tiene algún registro donde haya entrado pero no salido
   return attendanceRecords.value.some(record => 
     record.employeeId === employeeId && 
     record.checkIn && 

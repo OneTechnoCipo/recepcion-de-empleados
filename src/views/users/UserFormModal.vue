@@ -116,10 +116,10 @@
 import { ref, watch, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
-import { employees } from '../../data/employees'; // Sincronizado para chequear duplicados en memoria
+import { employees } from '../../data/employees'; 
 
-// Gestiona el formulario para crear o editar usuarios, incluyendo un filtro dinámico por sector y 
-// una validación en tiempo real que bloquea el guardado si el DNI ya existe.
+// Manages the user creation and edition form, incorporating a dynamic 
+// sector filter and real-time DNI duplication guard to prevent database errors.
 
 const props = defineProps<{ isOpen: boolean; userToEdit: Employee | null; }>();
 const emit = defineEmits<{ (e: 'close'): void; (e: 'save', user: Employee, isEditing: boolean): void; }>();
@@ -130,6 +130,7 @@ const dniInput = ref('');
 const defaultForm = (): Employee => ({ id: 0, firstName: '', lastName: '', email: '', role: '', sector: '', standardWorkHours: 8, overtimeValue: 1.5 });
 const formData = ref<Employee>(defaultForm());
 
+// Watches the worker injection prop to reset the reactive state configuration accordingly
 watch(() => props.userToEdit, (newVal) => {
   if (newVal) { 
     formData.value = { ...newVal }; 
@@ -142,18 +143,19 @@ watch(() => props.userToEdit, (newVal) => {
   }
 }, { immediate: true });
 
+// Sanitize block that intercepts input streams and strips non-numeric characters using Regex structures
 const onDniInput = (event: Event) => {
   const input = event.target as HTMLInputElement;
   dniInput.value = input.value.replace(/\D/g, ''); 
 };
 
-// Error de longitud del DNI
+// Computes structural length failures to flag invalid DNI string configurations
 const dniError = computed(() => {
   if (!dniInput.value) return false; 
   return dniInput.value.length < 7 || dniInput.value.length > 8;
 });
 
-// Validación de DNI Duplicado en tiempo real
+// Scans the active staff database array dynamically to flag overlapping identities during creation steps
 const isDniDuplicated = computed(() => {
   if (isEditing.value || !dniInput.value) return false;
   
@@ -161,7 +163,7 @@ const isDniDuplicated = computed(() => {
   return employees.value.some(emp => emp.id === currentId);
 });
 
-// Helper de capitalización automática
+// Helper string method that normalizes casing patterns across whitespace boundaries
 const capitalizeWords = (str: string): string => {
   if (!str) return '';
   return str
@@ -171,10 +173,11 @@ const capitalizeWords = (str: string): string => {
     .join(' ');
 };
 
+// Dispatches validated payloads up into root composables to trigger core state mutations
 const handleSubmit = () => {
   if (dniError.value || isDniDuplicated.value) return;
 
-  // Límite estricto de horas laborales diarias lógicas
+  // Strict operational safety baseline constraint guard evaluating raw numbers
   if (formData.value.standardWorkHours <= 0 || formData.value.standardWorkHours > 12) {
     alert("⚠️ Las horas base diarias deben ser mayores a 0 y no pueden superar las 12 horas.");
     return;
@@ -182,7 +185,7 @@ const handleSubmit = () => {
 
   formData.value.id = parseInt(dniInput.value, 10);
 
-  // Formateo estricto
+  // Normalizes target fields structure signatures prior to component communication steps
   formData.value.firstName = capitalizeWords(formData.value.firstName);
   formData.value.lastName = capitalizeWords(formData.value.lastName);
   formData.value.role = capitalizeWords(formData.value.role);

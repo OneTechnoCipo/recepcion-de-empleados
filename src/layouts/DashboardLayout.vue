@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
-// Importamos el componente Icon de Iconify
 import { Icon } from '@iconify/vue';
 
-// Define la plantilla visual común de la aplicación, organizando la barra de 
-// navegación lateral o superior y la zona de contenido dinámico.
+// Defines the main dashboard visual grid wrapper, 
+// organizing the main shell container and dynamic slot sections.
 
 const isMobileMenuOpen = ref(false);
-const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value; };
+
+// Toggles the structural visibility state for the slide-out navigation bar on mobile screen layouts
+const toggleMobileMenu = () => { 
+  isMobileMenuOpen.value = !isMobileMenuOpen.value; 
+};
 </script>
 
 <template>

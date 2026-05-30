@@ -58,10 +58,14 @@ import { useRoute } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { employees } from '../../data/employees';
 
-// Vista detallada que expone la información completa, ficha técnica e historial 
-// de un empleado específico seleccionado en el sistema.
+// Detail view rendering the technical file, specific background history, 
+// and comprehensive profile parameters of an individual worker.
 
 const route = useRoute();
+
+// Extracts the dynamic URL ID route string parameter and casts it to a clean operational Number signature
 const employeeId = computed(() => Number(route.params.id));
+
+// Scans the application global employee data array collection to cross-reference the active worker target
 const user = computed(() => employees.value.find(e => e.id === employeeId.value));
 </script>

@@ -1,10 +1,10 @@
 import { ref } from 'vue';
 import type { AttendanceRecord } from '../models/CustomModels';
 
-// Almacena y exporta el listado inicial de registros de asistencia simulados 
-// para poblar las tablas del sistema durante el desarrollo.
+// Exports mock attendance tracking datasets to populate 
+// table records during the application development phase.
 
-// Definimos los datos iniciales
+// Mock structural dataset containing historical tracking sessions for local execution
 const initialRecords: AttendanceRecord[] = [
   {
     id: 1,
@@ -71,5 +71,5 @@ const initialRecords: AttendanceRecord[] = [
   },
 ];
 
-// Exportamos como un ref reactivo para asegurar la persistencia
+// Instantiates and exports a global reactive state reference to allow persistence across layouts
 export const attendanceRecords = ref<AttendanceRecord[]>(initialRecords);

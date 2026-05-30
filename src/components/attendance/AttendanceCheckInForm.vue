@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { employees } from '../../data/employees';
-import { attendanceRecords } from '../../data/attendance'; // Importamos los registros para validar el estado actual
+import { attendanceRecords } from '../../data/attendance'; 
 import type { Employee } from '../../models/CustomModels';
 
-// Renderiza el formulario de fichaje que procesa el DNI ingresado y 
-// activa los eventos de registro de entrada o salida del personal.
+// Handles the core check-in form processing, validating employee 
+// input and triggering reactive attendance events.
 
 const dni = ref('');
 const notes = ref('');
@@ -14,14 +14,14 @@ const emit = defineEmits<{
   (e: 'register-attendance', payload: { employeeId: number; notes: string }): void
 }>();
 
-// Computado para detectar en tiempo real si el DNI ingresado ya está adentro
+// Computed property to detect in real-time if the entered DNI is already checked in
 const isEmployeeCheckedIn = computed(() => {
   const employeeId = Number(dni.value);
   if (!employeeId) return false;
 
   const today = new Date().toISOString().split('T')[0];
 
-  // Retorna true si tiene un fichaje hoy sin hora de salida
+  // Returns true if there is an active attendance log today without a checkout timestamp
   return attendanceRecords.value.some(
     (r) => r.employeeId === employeeId && r.date === today && (r.checkOut === null || r.checkOut.trim() === '')
   );
@@ -37,13 +37,13 @@ const submit = () => {
     return;
   }
 
-  // Emitimos el evento (el padre AttendanceView se encarga de procesar entrada o salida automáticamente)
+  // Emits the event so the parent component handles check-in or check-out logic automatically
   emit('register-attendance', {
     employeeId,
     notes: notes.value
   });
 
-  // Limpiar campos tras registrar
+  // Reset fields after successful registration
   dni.value = '';
   notes.value = '';
 };

@@ -4,8 +4,8 @@ import router from './router'
 
 import './style.css'
 
-// Archivo de entrada principal que inicializa la aplicación de Vue, 
-// monta el enrutador y conecta los estilos globales en el navegador.
+// Primary application entry point that bootstraps the Vue framework instance, 
+// mounts global styling, and injects routing logic.
 
 createApp(App)
     .use(router)
