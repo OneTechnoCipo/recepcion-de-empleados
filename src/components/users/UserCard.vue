@@ -39,13 +39,14 @@ import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
 import { RouterLink } from 'vue-router';
 
-// Muestra el perfil resumido de un empleado en formato de tarjeta visual, 
-// incluyendo sus datos básicos y sector asignado.
+// Displays a summarized visual card profile for individual employees, 
+// detailing their assigned sectors and personal information.
 
 defineProps<{
   user: Employee;
 }>();
 
+// Defines reactive event emitters to communicate action payloads back to the parent view container
 defineEmits<{
   (e: 'edit', user: Employee): void;
   (e: 'delete', id: number): void;

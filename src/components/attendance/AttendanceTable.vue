@@ -68,13 +68,12 @@ import { Icon } from '@iconify/vue';
 import type { AttendanceRecord } from '../../models/CustomModels';
 import { employees } from '../../data/employees';
 
-// Muestra de forma ordenada las entradas y salidas registradas durante el día actual, 
-// detallando los horarios de cada empleado.
+// Displays daily check-in and check-out logs in a structured layout, 
+// updating timestamps reactively for active staff.
 
-// Función corregida:
+// Parses the technical ISO date format into a clean day/month display string
 const formatDate = (dateStr: string) => {
   const parts = dateStr.split('-');
-  // Si tienes 3 partes, formateamos como día/mes
   if (parts.length === 3) {
     return `${parts[2]}/${parts[1]}`;
   }
@@ -92,10 +91,11 @@ const props = defineProps<{
   records: AttendanceRecord[]
 }>();
 
+// Computes detailed payroll and tracking statistics by cross-referencing logs with employee data
 const extendedAttendanceRecords = computed<ExtendedAttendanceRecord[]>(() => {
   return props.records.map((record) => {
     const employee = employees.value.find(e => e.id === record.employeeId);
-    const employeeFullName = employee ? `${employee.firstName} ${employee.lastName}` : 'Desconocido';
+    const employeeFullName = employee ? `${employee.firstName} ${employee.lastName}` : 'Unknown';
     const employeeRole = employee ? employee.role : 'N/A';
 
     let workedHours = 0;  
@@ -106,8 +106,11 @@ const extendedAttendanceRecords = computed<ExtendedAttendanceRecord[]>(() => {
       const checkOutTime = new Date(`${record.date}T${record.checkOut}:00`);
       const totalMilliseconds = checkOutTime.getTime() - checkInTime.getTime();
       const totalHours = totalMilliseconds / (1000 * 60 * 60);
+      
+      // Deducts statutory break time from total shift duration
       workedHours = Math.max(0, totalHours - record.breakHours);
 
+      // Calculates dynamic overtime if total duration exceeds standard contract parameters
       if (employee && workedHours > employee.standardWorkHours) {
         overtimeHours = workedHours - employee.standardWorkHours;
       }

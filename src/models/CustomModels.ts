@@ -1,5 +1,5 @@
-// Define las interfaces y tipos de datos personalizados requeridos por 
-// TypeScript para estructurar los objetos de negocio del proyecto.
+// Explicit TypeScript strict types and interface definitions to guarantee 
+// internal code architecture and data contracts integrity.
 
 export interface Employee {
   id: number;

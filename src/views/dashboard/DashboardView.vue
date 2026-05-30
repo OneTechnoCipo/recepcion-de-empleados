@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <div>
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard Principal</h1>
-      <p class="text-gray-600 dark:text-gray-400 mt-1">Resumen general del sistema de empleados y asistencia.</p>
+      <p class="text-gray-600 dark:text-gray-400 mt-1">Resumen general del sistema de empleados and asistencia.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -62,11 +62,18 @@ import { RouterLink } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { employees } from '../../data/employees';
 
-// Vista general del panel de control que unifica las tarjetas de resumen y 
-// los accesos rápidos a las métricas del sistema.
+// Main dashboard view component integrating summary 
+// data visual analytics and system access control shortcuts.
 
+// Tracks total employee count from global state collection length
 const totalEmployees = computed(() => employees.value.length);
+
+// Computes unique working business sectors utilizing a JavaScript Set collection to map fields
 const totalSectors = computed(() => new Set(employees.value.map(emp => emp.sector)).size);
+
+// Aggregates standard baseline shift hours using native array reduce operations
 const totalStandardHours = computed(() => employees.value.reduce((acc, emp) => acc + emp.standardWorkHours, 0));
+
+// Returns the last three newly registered workers by reversing state hierarchy elements
 const recentEmployees = computed(() => [...employees.value].reverse().slice(0, 3));
 </script>

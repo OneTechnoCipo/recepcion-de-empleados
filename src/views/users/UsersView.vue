@@ -58,10 +58,10 @@ import UserCard from '../../components/users/UserCard.vue';
 import UserFormModal from './UserFormModal.vue'; 
 import type { Employee } from '../../models/CustomModels';
 
-// Contenedor principal del módulo de empleados que coordina la barra de búsqueda, 
-// los filtros por sector y la apertura del formulario de alta.
+// Orchestrates the user management domain, binding real-time text 
+// searching filters and triggering user modal forms.
 
-// Desestructuración incorporando las nuevas variables reactivas del filtro de sector
+// Destructures core reactive state and filtering hooks directly driven from the shared domain composable
 const { 
   searchQuery, 
   selectedSector,
@@ -77,25 +77,30 @@ const {
 const isModalOpen = ref(false);
 const selectedUser = ref<Employee | null>(null);
 
+// Opens the modal overlay in a fresh state to handle empty creation payloads
 const openCreateModal = () => {
   selectedUser.value = null;
   isModalOpen.value = true;
 };
 
+// Injects an active worker entity row into the state prior to opening the editing visual interface
 const openEditModal = (user: Employee) => {
   selectedUser.value = user;
   isModalOpen.value = true;
 };
 
+// Safely resets current context pointers and hides active layout modal components
 const closeModal = () => {
   isModalOpen.value = false;
   selectedUser.value = null;
 };
 
+// Relays valid employee payload schemas up into the operational state management machine
 const handleSaveUser = (userData: Employee, isEditing: boolean) => {
   saveUser(userData, isEditing);
 };
 
+// Triggers a structural confirmation window before executing data removal steps across views
 const handleDelete = (id: number) => {
   if (confirm('¿Estás seguro de eliminar este usuario? Quitarlo aquí también afectará las pantallas de asistencia.')) {
     deleteUser(id);
