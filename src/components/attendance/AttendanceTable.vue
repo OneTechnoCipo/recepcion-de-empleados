@@ -68,6 +68,9 @@ import { Icon } from '@iconify/vue';
 import type { AttendanceRecord } from '../../models/CustomModels';
 import { employees } from '../../data/employees';
 
+// Muestra de forma ordenada las entradas y salidas registradas durante el día actual, 
+// detallando los horarios de cada empleado.
+
 // Función corregida:
 const formatDate = (dateStr: string) => {
   const parts = dateStr.split('-');

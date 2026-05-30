@@ -33,6 +33,9 @@ import AttendanceCheckInForm from '../../components/attendance/AttendanceCheckIn
 import { attendanceRecords } from '../../data/attendance'
 import type { AttendanceRecord } from '../../models/CustomModels'
 
+// Lee el DNI en tiempo real: si el empleado está ausente, muestra el botón azul de Entrada; si ya ingresó,
+// cambia a rojo para marcar la Salida y cerrar su ciclo de asistencia.
+
 const showForm = ref(true)
 
 // Usamos la referencia global directamente, sin clonar

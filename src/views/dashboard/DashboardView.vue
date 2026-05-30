@@ -62,6 +62,9 @@ import { RouterLink } from 'vue-router';
 import { Icon } from '@iconify/vue';
 import { employees } from '../../data/employees';
 
+// Vista general del panel de control que unifica las tarjetas de resumen y 
+// los accesos rápidos a las métricas del sistema.
+
 const totalEmployees = computed(() => employees.value.length);
 const totalSectors = computed(() => new Set(employees.value.map(emp => emp.sector)).size);
 const totalStandardHours = computed(() => employees.value.reduce((acc, emp) => acc + emp.standardWorkHours, 0));

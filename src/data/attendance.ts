@@ -1,6 +1,9 @@
 import { ref } from 'vue';
 import type { AttendanceRecord } from '../models/CustomModels';
 
+// Almacena y exporta el listado inicial de registros de asistencia simulados 
+// para poblar las tablas del sistema durante el desarrollo.
+
 // Definimos los datos iniciales
 const initialRecords: AttendanceRecord[] = [
   {

@@ -2,6 +2,9 @@ import { ref, computed } from 'vue';
 import { employees } from '../data/employees';
 import type { Employee } from '../models/CustomModels';
 
+// Composable que centraliza el estado global de los usuarios, proveyendo las funciones de 
+// alta, baja, modificación y filtrado de empleados.
+
 export type UserSortKey = 'id' | 'firstName' | 'email' | 'sector' | 'standardWorkHours';
 export type SortOrder = 'asc' | 'desc';
 

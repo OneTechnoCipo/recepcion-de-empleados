@@ -58,6 +58,9 @@ import UserCard from '../../components/users/UserCard.vue';
 import UserFormModal from './UserFormModal.vue'; 
 import type { Employee } from '../../models/CustomModels';
 
+// Contenedor principal del módulo de empleados que coordina la barra de búsqueda, 
+// los filtros por sector y la apertura del formulario de alta.
+
 // Desestructuración incorporando las nuevas variables reactivas del filtro de sector
 const { 
   searchQuery, 

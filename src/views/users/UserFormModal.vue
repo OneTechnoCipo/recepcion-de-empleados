@@ -118,6 +118,9 @@ import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
 import { employees } from '../../data/employees'; // Sincronizado para chequear duplicados en memoria
 
+// Gestiona el formulario para crear o editar usuarios, incluyendo un filtro dinámico por sector y 
+// una validación en tiempo real que bloquea el guardado si el DNI ya existe.
+
 const props = defineProps<{ isOpen: boolean; userToEdit: Employee | null; }>();
 const emit = defineEmits<{ (e: 'close'): void; (e: 'save', user: Employee, isEditing: boolean): void; }>();
 
