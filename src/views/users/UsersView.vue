@@ -6,14 +6,25 @@
         <p class="text-gray-600 dark:text-gray-400 mt-1">Administra la información de accesos, sectores y horarios de los empleados.</p>
       </div>
       
-      <div class="w-full sm:w-auto flex gap-2">
+      <div class="w-full sm:w-auto flex flex-col sm:flex-row gap-2">
         <input 
           v-model="searchQuery" 
           type="text" 
           placeholder="Buscar por nombre, DNI, sector..." 
-          class="w-full sm:w-72 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          class="w-full sm:w-72 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm"
         />
-        <button @click="openCreateModal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition whitespace-nowrap">
+
+        <select 
+          v-model="selectedSector" 
+          class="w-full sm:w-48 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-800 dark:border-gray-700 dark:text-white text-sm cursor-pointer"
+        >
+          <option value="">Todos los sectores</option>
+          <option v-for="sector in availableSectors" :key="sector" :value="sector">
+            {{ sector }}
+          </option>
+        </select>
+
+        <button @click="openCreateModal" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition whitespace-nowrap text-sm">
           + Nuevo Usuario
         </button>
       </div>
@@ -47,9 +58,11 @@ import UserCard from '../../components/users/UserCard.vue';
 import UserFormModal from './UserFormModal.vue'; 
 import type { Employee } from '../../models/CustomModels';
 
-// Desestructuración limpia importando las funciones del composable actualizado
+// Desestructuración incorporando las nuevas variables reactivas del filtro de sector
 const { 
   searchQuery, 
+  selectedSector,
+  availableSectors,
   sortKey, 
   sortOrder, 
   filteredUsers, 

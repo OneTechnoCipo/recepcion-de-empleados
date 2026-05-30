@@ -2,18 +2,16 @@ import { ref, computed } from 'vue';
 import { employees } from '../data/employees';
 import type { Employee } from '../models/CustomModels';
 
-// Tipos estrictos basados exactamente en las propiedades de tu Employee
 export type UserSortKey = 'id' | 'firstName' | 'email' | 'sector' | 'standardWorkHours';
 export type SortOrder = 'asc' | 'desc';
 
 export function useUsers() {
   const searchQuery = ref('');
+  const selectedSector = ref(''); // Estado reactivo para controlar el filtro por combo
   
-  // Estados reactivos para controlar el ordenamiento (por defecto por nombre)
   const sortKey = ref<UserSortKey>('firstName'); 
   const sortOrder = ref<SortOrder>('asc');
 
-  // Función interactiva para cambiar de columna o invertir el orden
   const changeSort = (key: UserSortKey) => {
     if (sortKey.value === key) {
       sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
@@ -23,22 +21,27 @@ export function useUsers() {
     }
   };
 
-  // Procesamiento en cascada: Primero Filtra, después Ordena
   const filteredUsers = computed(() => {
     const query = searchQuery.value.toLowerCase().trim();
+    const sectorFilter = selectedSector.value;
     
-    // 1. Filtrado completo por múltiples campos
+    // 1. Filtrado en cascada (Buscador general + Combo de Sector)
     let result = employees.value.filter(emp => {
       const fullName = `${emp.firstName} ${emp.lastName}`.toLowerCase();
-      return (
+      
+      const matchesSearch = (
         emp.id.toString().includes(query) ||
         fullName.includes(query) ||
         emp.email.toLowerCase().includes(query) ||
         emp.sector.toLowerCase().includes(query)
       );
+
+      const matchesSector = sectorFilter === '' || emp.sector === sectorFilter;
+
+      return matchesSearch && matchesSector;
     });
 
-    // 2. Ordenamiento dinámico sin romper los tipos de TS
+    // 2. Ordenamiento dinámico sin romper tipos
     return [...result].sort((a, b) => {
       let modifier = sortOrder.value === 'asc' ? 1 : -1;
 
@@ -50,12 +53,17 @@ export function useUsers() {
         return (a.standardWorkHours - b.standardWorkHours) * modifier;
       }
 
-      // Tratamiento seguro de strings para firstName, email y sector
       const valA = String(a[sortKey.value]).toLowerCase();
       const valB = String(b[sortKey.value]).toLowerCase();
       
       return valA.localeCompare(valB) * modifier;
     });
+  });
+
+  // Extrae dinámicamente los sectores únicos y válidos para armar las opciones del select
+  const availableSectors = computed(() => {
+    const sectors = employees.value.map(emp => emp.sector);
+    return [...new Set(sectors)].filter(Boolean);
   });
 
   const saveUser = (userData: Employee, isEditing: boolean) => {
@@ -76,6 +84,8 @@ export function useUsers() {
 
   return { 
     searchQuery, 
+    selectedSector,   // Exportado para enlazar con v-model en la vista
+    availableSectors, // Exportado para iterar las opciones en la vista
     sortKey, 
     sortOrder, 
     filteredUsers, 

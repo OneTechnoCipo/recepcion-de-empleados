@@ -28,11 +28,17 @@
               @input="onDniInput"
               placeholder="Ej: 42123456"
               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white disabled:bg-gray-100 dark:disabled:bg-gray-900 transition-all font-mono"
-              :class="{'border-red-500 focus:ring-red-500 dark:border-red-500': dniError}"
+              :class="{'border-red-500 focus:ring-red-500 dark:border-red-500': dniError || isDniDuplicated}"
             />
+            
             <p v-if="dniError" class="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
               <Icon icon="heroicons:exclamation-triangle" class="w-4 h-4 text-red-500" />
               El DNI debe tener entre 7 y 8 dígitos.
+            </p>
+            
+            <p v-if="isDniDuplicated" class="text-red-500 text-xs mt-1 font-medium flex items-center gap-1">
+              <Icon icon="heroicons:exclamation-triangle" class="w-4 h-4 text-red-500" />
+              Este número de DNI ya pertenece a un empleado.
             </p>
           </div>
 
@@ -49,6 +55,7 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nombre</label>
             <input v-model="formData.firstName" type="text" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
           </div>
+          
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Apellido</label>
             <input v-model="formData.lastName" type="text" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
@@ -60,6 +67,7 @@
             </label>
             <input v-model="formData.role" type="text" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
           </div>
+          
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1.5">
               <Icon icon="heroicons:building-office" class="w-4 h-4 text-gray-400" /> Sector
@@ -71,10 +79,11 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1.5">
               <Icon icon="heroicons:clock" class="w-4 h-4 text-gray-400" /> Horas Base
             </label>
-            <input v-model.number="formData.standardWorkHours" type="number" required min="1" max="24"
+            <input v-model.number="formData.standardWorkHours" type="number" required min="1" max="12"
               class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
+          
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1.5">
               <Icon icon="heroicons:calculator" class="w-4 h-4 text-gray-400" /> Mult. Extra
@@ -91,7 +100,7 @@
           </button>
           <button 
             type="submit" 
-            :disabled="dniError"
+            :disabled="dniError || isDniDuplicated"
             class="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
           >
             <Icon icon="heroicons:check" class="w-5 h-5" />
@@ -107,6 +116,7 @@
 import { ref, watch, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
+import { employees } from '../../data/employees'; // Sincronizado para chequear duplicados en memoria
 
 const props = defineProps<{ isOpen: boolean; userToEdit: Employee | null; }>();
 const emit = defineEmits<{ (e: 'close'): void; (e: 'save', user: Employee, isEditing: boolean): void; }>();
@@ -134,12 +144,21 @@ const onDniInput = (event: Event) => {
   dniInput.value = input.value.replace(/\D/g, ''); 
 };
 
+// Error de longitud del DNI
 const dniError = computed(() => {
   if (!dniInput.value) return false; 
   return dniInput.value.length < 7 || dniInput.value.length > 8;
 });
 
-// Función helper para transformar "san ti" o "trapeador" en "San Ti" y "Trapeador"
+// Validación de DNI Duplicado en tiempo real
+const isDniDuplicated = computed(() => {
+  if (isEditing.value || !dniInput.value) return false;
+  
+  const currentId = parseInt(dniInput.value, 10);
+  return employees.value.some(emp => emp.id === currentId);
+});
+
+// Helper de capitalización automática
 const capitalizeWords = (str: string): string => {
   if (!str) return '';
   return str
@@ -150,11 +169,17 @@ const capitalizeWords = (str: string): string => {
 };
 
 const handleSubmit = () => {
-  if (dniError.value) return;
+  if (dniError.value || isDniDuplicated.value) return;
+
+  // Límite estricto de horas laborales diarias lógicas
+  if (formData.value.standardWorkHours <= 0 || formData.value.standardWorkHours > 12) {
+    alert("⚠️ Las horas base diarias deben ser mayores a 0 y no pueden superar las 12 horas.");
+    return;
+  }
 
   formData.value.id = parseInt(dniInput.value, 10);
 
-  // Formateamos los strings en caliente antes de guardarlos para garantizar consistencia visual
+  // Formateo estricto
   formData.value.firstName = capitalizeWords(formData.value.firstName);
   formData.value.lastName = capitalizeWords(formData.value.lastName);
   formData.value.role = capitalizeWords(formData.value.role);
