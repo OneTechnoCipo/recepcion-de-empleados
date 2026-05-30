@@ -4,6 +4,9 @@ import { employees } from '../../data/employees';
 import { attendanceRecords } from '../../data/attendance'; // Importamos los registros para validar el estado actual
 import type { Employee } from '../../models/CustomModels';
 
+// Renderiza el formulario de fichaje que procesa el DNI ingresado y 
+// activa los eventos de registro de entrada o salida del personal.
+
 const dni = ref('');
 const notes = ref('');
 

@@ -1,6 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import DashboardLayout from '../layouts/DashboardLayout.vue';
 
+// Define las rutas de navegación de la aplicación de forma SPA, conectando las vistas de Usuarios, 
+// Asistencia e Historial sin recargar el navegador.
+
 const routes = [
   {
     path: '/',

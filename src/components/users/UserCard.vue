@@ -39,6 +39,9 @@ import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
 import { RouterLink } from 'vue-router';
 
+// Muestra el perfil resumido de un empleado en formato de tarjeta visual, 
+// incluyendo sus datos básicos y sector asignado.
+
 defineProps<{
   user: Employee;
 }>();

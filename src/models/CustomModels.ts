@@ -1,3 +1,6 @@
+// Define las interfaces y tipos de datos personalizados requeridos por 
+// TypeScript para estructurar los objetos de negocio del proyecto.
+
 export interface Employee {
   id: number;
   firstName: string;

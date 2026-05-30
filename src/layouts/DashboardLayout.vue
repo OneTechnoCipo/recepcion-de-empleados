@@ -4,6 +4,9 @@ import { RouterLink, RouterView } from 'vue-router';
 // Importamos el componente Icon de Iconify
 import { Icon } from '@iconify/vue';
 
+// Define la plantilla visual común de la aplicación, organizando la barra de 
+// navegación lateral o superior y la zona de contenido dinámico.
+
 const isMobileMenuOpen = ref(false);
 const toggleMobileMenu = () => { isMobileMenuOpen.value = !isMobileMenuOpen.value; };
 </script>

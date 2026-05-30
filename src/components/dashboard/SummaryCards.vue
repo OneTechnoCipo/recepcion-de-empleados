@@ -30,6 +30,9 @@
 import { computed } from 'vue';
 import { Icon } from '@iconify/vue'; 
 
+// Muestra métricas rápidas e indicadores clave en el panel principal, 
+// como el total de empleados activos y ausentes en tiempo real.
+
 interface SummaryCard {
   title: string;
   value: string | number;

@@ -103,6 +103,9 @@ import type { UserSortKey, SortOrder } from '../../composables/useUsers';
 import { RouterLink } from 'vue-router';
 import { attendanceRecords } from '../../data/attendance'; // Importamos los fichajes en memoria
 
+// Renderiza la lista de usuarios y cruza sus datos con los fichajes del día para mostrar automáticamente 
+// la insignia verde de "Activo" o gris de "Ausente".
+
 defineProps<{ 
   users: Employee[];
   sortKey: UserSortKey;
