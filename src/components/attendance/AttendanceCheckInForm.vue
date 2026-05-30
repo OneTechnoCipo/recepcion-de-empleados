@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { employees } from '../../data/employees';
+import { attendanceRecords } from '../../data/attendance'; // Importamos los registros para validar el estado actual
 import type { Employee } from '../../models/CustomModels';
 
 const dni = ref('');
@@ -10,10 +11,22 @@ const emit = defineEmits<{
   (e: 'register-attendance', payload: { employeeId: number; notes: string }): void
 }>();
 
+// Computado para detectar en tiempo real si el DNI ingresado ya está adentro
+const isEmployeeCheckedIn = computed(() => {
+  const employeeId = Number(dni.value);
+  if (!employeeId) return false;
+
+  const today = new Date().toISOString().split('T')[0];
+
+  // Retorna true si tiene un fichaje hoy sin hora de salida
+  return attendanceRecords.value.some(
+    (r) => r.employeeId === employeeId && r.date === today && (r.checkOut === null || r.checkOut.trim() === '')
+  );
+});
+
 const submit = () => {
   const employeeId = Number(dni.value);
   
-  // Accedemos a la lista reactiva usando .value y tipamos explícitamente el callback
   const employee = employees.value.find((e: Employee) => e.id === employeeId);
 
   if (!employee) {
@@ -21,7 +34,7 @@ const submit = () => {
     return;
   }
 
-  // Emitimos el evento al padre (AttendanceView)
+  // Emitimos el evento (el padre AttendanceView se encarga de procesar entrada o salida automáticamente)
   emit('register-attendance', {
     employeeId,
     notes: notes.value
@@ -65,9 +78,14 @@ const submit = () => {
 
       <button
         type="submit"
-        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-lg shadow-blue-500/20"
+        class="w-full font-semibold py-2.5 rounded-lg text-sm transition-colors shadow-lg"
+        :class="
+          isEmployeeCheckedIn 
+            ? 'bg-red-600 hover:bg-red-700 text-white shadow-red-500/20' 
+            : 'bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/20'
+        "
       >
-        Registrar Entrada
+        {{ isEmployeeCheckedIn ? 'Registrar Salida' : 'Registrar Entrada' }}
       </button>
     </form>
   </div>

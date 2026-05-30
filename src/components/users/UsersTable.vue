@@ -44,6 +44,8 @@
             </div>
           </th>
 
+          <th class="p-4 font-semibold text-sm uppercase tracking-wider">Estado</th>
+
           <th class="p-4 font-semibold text-sm uppercase tracking-wider text-right">Acciones</th>
         </tr>
       </thead>
@@ -60,6 +62,23 @@
           </td>
           <td class="p-4 text-gray-700 dark:text-gray-300 text-sm font-mono">{{ user.standardWorkHours }}h</td>
           
+          <td class="p-4">
+            <span 
+              v-if="isEmployeeActive(user.id)" 
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+            >
+              <Icon icon="heroicons:circle-stack" class="w-3.5 h-3.5 fill-current" />
+              Activo
+            </span>
+            <span 
+              v-else 
+              class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-400"
+            >
+              <Icon icon="heroicons:minus-circle" class="w-3.5 h-3.5" />
+              Ausente
+            </span>
+          </td>
+
           <td class="p-4 text-right space-x-2">
             <RouterLink :to="'/users/' + user.id" class="inline-flex items-center text-gray-500 hover:text-green-600 transition-colors">
               <Icon icon="heroicons:eye" class="w-5 h-5" />
@@ -82,6 +101,7 @@ import { Icon } from '@iconify/vue';
 import type { Employee } from '../../models/CustomModels';
 import type { UserSortKey, SortOrder } from '../../composables/useUsers';
 import { RouterLink } from 'vue-router';
+import { attendanceRecords } from '../../data/attendance'; // Importamos los fichajes en memoria
 
 defineProps<{ 
   users: Employee[];
@@ -94,4 +114,14 @@ defineEmits<{
   (e: 'edit', user: Employee): void;
   (e: 'delete', id: number): void;
 }>();
+
+// Función lógica para cruzar datos y verificar el estado actual del empleado
+const isEmployeeActive = (employeeId: number): boolean => {
+  // Buscamos si el empleado tiene algún registro donde haya entrado pero no salido
+  return attendanceRecords.value.some(record => 
+    record.employeeId === employeeId && 
+    record.checkIn && 
+    (!record.checkOut || record.checkOut.trim() === '')
+  );
+};
 </script>
